@@ -3,7 +3,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertLeadSchema, insertExtractionSchema, insertSettingsSchema } from "@shared/schema";
+import { insertLeadSchema, insertExtractionSchema, insertSettingsSchema } from "../shared/schema";
 import * as XLSX from 'xlsx';
 import axios from "axios";
 import stringSimilarity from "string-similarity"; 
