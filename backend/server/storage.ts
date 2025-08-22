@@ -1,4 +1,4 @@
-import { leads, extractions, settings, type Lead, type InsertLead, type Extraction, type InsertExtraction, type Settings, type InsertSettings } from "@shared/schema";
+import { leads, extractions, settings, type Lead, type InsertLead, type Extraction, type InsertExtraction, type Settings, type InsertSettings } from "../shared/schema";
 
 export interface IStorage {
   // Lead management
