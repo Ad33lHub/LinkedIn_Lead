@@ -365,7 +365,7 @@ import http from "http";
 import { registerRoutes } from "./routes";
 import path from "path";
 import fs from "fs";
-const cors = require('cors');
+import cors from "cors";
 
 const app = express();
 
