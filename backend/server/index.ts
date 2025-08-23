@@ -12,6 +12,7 @@ const app = express();
 // 🔥 SIRF EK BAAR CORS - Ye sabse upar
 app.use(cors({
   origin: [
+      "https://linkedin-lead.vercel.app",
       "https://linkedin-lead-53woyfp71-adeels-projects-22208b30.vercel.app",
       "http://localhost:3000",
       "http://localhost:5173",
