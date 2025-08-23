@@ -145,48 +145,43 @@
 // })();
 
 
-
 import express, { type Request, Response, NextFunction } from "express";
 import http from "http";
 import { registerRoutes } from "./routes";
 import path from "path";
 import fs from "fs";
-const cors = require('cors');
 
 const app = express();
 
-
-
-app.use(cors({
-  origin: '*',                    // 🔥 Koi bhi domain allow
-  credentials: false,             // ⚠️ credentials false karna padega with *
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
-}));
-
-// Agar credentials chahiye with any origin (Not recommended for production)
-app.use(cors({
-  origin: true,                   // 🔥 Any origin but credentials work karta hai
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
-}));
-
-// Enable CORS for frontend
+// 🔥 SINGLE CORS CONFIGURATION - sabse upar
 app.use((req, res, next) => {
+  // Allow any origin
   res.header('Access-Control-Allow-Origin', '*');
+  
+  // Allow methods
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-
+  
+  // Allow headers
+  res.header('Access-Control-Allow-Headers', 
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control'
+  );
+  
+  // Handle preflight requests
   if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
+    res.header('Access-Control-Max-Age', '86400'); // Cache for 24 hours
+    return res.status(200).json({
+      message: 'CORS preflight successful',
+      allowedMethods: 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      allowedHeaders: 'Content-Type, Authorization'
+    });
   }
+  
+  next();
 });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// Body parsing middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Custom logging function
 function log(message: string, source = "express") {
@@ -229,6 +224,31 @@ app.use((req, res, next) => {
   });
 
   next();
+});
+
+// Health check endpoint - CORS test ke liye
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    cors: 'Enabled for all origins',
+    timestamp: new Date().toISOString(),
+    method: req.method,
+    origin: req.headers.origin || 'No origin header',
+    userAgent: req.headers['user-agent']
+  });
+});
+
+// API test endpoint
+app.get('/api/test', (req, res) => {
+  res.json({
+    message: 'CORS test successful!',
+    receivedHeaders: {
+      origin: req.headers.origin,
+      'content-type': req.headers['content-type'],
+      authorization: req.headers.authorization ? 'Present' : 'Not present'
+    },
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Static files serving (for production)
@@ -278,34 +298,61 @@ function serveStaticFiles() {
         res.json({
           message: "Backend API is running",
           frontend: "Run frontend separately in development mode",
-          time: new Date().toISOString()
+          time: new Date().toISOString(),
+          cors: "Enabled for all origins",
+          endpoints: {
+            health: "/health",
+            apiTest: "/api/test",
+            apiRoutes: "/api/*"
+          }
         });
       });
     }
 
+    // 404 handler for API routes
+    app.use('/api/*', (req, res) => {
+      res.status(404).json({
+        message: 'API endpoint not found',
+        path: req.path,
+        method: req.method,
+        timestamp: new Date().toISOString()
+      });
+    });
+
     // Global error handler
-    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+    app.use((err: any, req: Request, res: Response, next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
-      log(`Error: ${status} - ${message}`, "error");
-      res.status(status).json({ message });
+      
+      log(`Error: ${status} - ${message} - Path: ${req.path}`, "error");
+      
+      res.status(status).json({ 
+        message,
+        path: req.path,
+        method: req.method,
+        timestamp: new Date().toISOString()
+      });
     });
 
     // Create and start server
     const server = http.createServer(app);
-    const port = parseInt(process.env.PORT || '5000', 10);
+    const port = parseInt(process.env.PORT || '10000', 10);
 
     server.listen(port, "0.0.0.0", () => {
       log(`✅ Backend API server running on http://localhost:${port}`);
       log(`📁 API endpoints available at http://localhost:${port}/api/*`);
+      log(`🏥 Health check: http://localhost:${port}/health`);
+      log(`🔧 CORS test: http://localhost:${port}/api/test`);
 
       if (process.env.NODE_ENV !== "production") {
         log(`🔧 Development: Run frontend separately (usually on port 3000)`);
+        log(`🌐 CORS enabled for ALL origins (*)`);
       }
     });
 
   } catch (error: any) {
     log(`❌ Failed to start server: ${error.message}`, "error");
+    console.error(error);
     process.exit(1);
   }
 })();
