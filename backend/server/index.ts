@@ -375,7 +375,7 @@ app.use(cors({
     'http://localhost:3000',     // React dev server
     'http://localhost:5173',     // Vite dev server
     'http://localhost:3001',     // Alternative ports
-    'https://your-frontend-domain.com' // Production domain
+    "https://linkedin-lead-53woyfp71-adeels-projects-22208b30.vercel.app" // Production domain
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
