@@ -372,10 +372,7 @@ const app = express();
 // 🔥 SIRF EK BAAR CORS - Ye sabse upar
 app.use(cors({
   origin: [
-    'http://localhost:3000',     // React dev server
-    'http://localhost:5173',     // Vite dev server
-    'http://localhost:3001',     // Alternative ports
-    "https://linkedin-lead-53woyfp71-adeels-projects-22208b30.vercel.app" // Production domain
+    "*"
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
