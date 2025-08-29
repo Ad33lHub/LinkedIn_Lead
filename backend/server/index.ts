@@ -12,13 +12,13 @@ const app = express();
 // 🔥 SIRF EK BAAR CORS - Ye sabse upar
 app.use(cors({
   origin: [
+      "https://elead.vercel.app",
       "https://linkedin-lead.vercel.app",
       "https://linkedin-lead-53woyfp71-adeels-projects-22208b30.vercel.app",
       "http://localhost:3000",
       "http://localhost:5173",
       "https://myfrontend.vercel.app",
-      "https://elead.vercel.app/",
-    "https://elead-ka202nfm8-adeels-projects-22208b30.vercel.app/"
+    "https://elead-ka202nfm8-adeels-projects-22208b30.vercel.app"
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
