@@ -16,7 +16,9 @@ app.use(cors({
       "https://linkedin-lead-53woyfp71-adeels-projects-22208b30.vercel.app",
       "http://localhost:3000",
       "http://localhost:5173",
-      "https://myfrontend.vercel.app"
+      "https://myfrontend.vercel.app",
+      "https://elead.vercel.app/",
+    "https://elead-ka202nfm8-adeels-projects-22208b30.vercel.app/"
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
